@@ -1399,76 +1399,70 @@
             console.log('Showing tab:', tabName);
         }
 
-        function selectDesign(designName) {
+        // Order form submission script
+        const ENDPOINT = "https://script.google.com/macros/s/AKfycbxnQJvPp6UsBEULjHgnaIwENRbNNbepUa5YXcdtl4b7beyu8USEWu9DXvux3WLSSHZu7A/exec";
+        let selectedDesign = "";
+        
+        window.selectDesign = function(name) {
+            selectedDesign = name;
+            
             // Update card styling
             document.querySelectorAll('.design-card').forEach(card => {
                 card.classList.remove('selected');
             });
             event.target.closest('.design-card').classList.add('selected');
             
-            // Fill design name into hidden input
-            document.getElementById('selected_design').value = designName;
-            
-            // Update label
-            document.getElementById('selected_label').textContent = "Selected design: " + designName;
-            
-            // Enable submit button
-            document.getElementById('submit_btn').disabled = false;
+            const label = document.getElementById("selected_label");
+            if (label) label.textContent = "Selected design: " + name;
+            const btn = document.getElementById("submit_btn");
+            if (btn) btn.disabled = false;
             
             // Scroll to form
             document.querySelector('.order-form-container').scrollIntoView({ 
                 behavior: 'smooth', 
                 block: 'nearest' 
             });
-        }
-
-        async function submitOrderForm(event) {
-            event.preventDefault();
-            
-            const submitBtn = document.getElementById('submit_btn');
-            const resultMsg = document.getElementById('result_msg');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
-            resultMsg.textContent = '';
-            
+        };
+        
+        document.getElementById("order_form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const name = document.getElementById("customer_name").value.trim();
+            const email = document.getElementById("customer_email").value.trim();
+            const desc = document.getElementById("order_description").value.trim();
+            const msg = document.getElementById("result_msg");
+            if (!selectedDesign) { msg.textContent = "Please select a design first."; return; }
+            if (!name || !email) { msg.textContent = "Name and email are required."; return; }
             const payload = {
-                selectedDesign: document.getElementById('selected_design').value,
-                customerName: document.getElementById('customer_name').value,
-                customerEmail: document.getElementById('customer_email').value,
-                orderDescription: document.getElementById('order_description').value,
-                timestamp: new Date().toLocaleString()
+                selectedDesign,
+                customerName: name,
+                customerEmail: email,
+                orderDescription: desc
             };
-            
-            // Replace with your Google Apps Script URL
-            const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyk3Ndx9qjoeiQdtvOHXnbRSJhzT-e9SgL3iNhRB6VtAXziGH4UGyd2sh7UtMwUBPmw/exec';
-            
             try {
-                const response = await fetch(ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                // use no-cors to avoid Apps Script redirect/CORS noise
+                await fetch(ENDPOINT, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
-                
-                resultMsg.textContent = 'Thanks! Your request was sent.';
-                resultMsg.style.color = '#4ade80';
-                document.getElementById('order_form').reset();
-                document.getElementById('selected_label').textContent = 'Selected design: none';
+                // optimistic success: Apps Script will send the email
+                msg.style.color = "#20c997";
+                msg.textContent = "Thanks. Your request was sent.";
+                this.reset();
+                selectedDesign = "";
+                const label = document.getElementById("selected_label");
+                if (label) label.textContent = "Selected design: none";
+                const btn = document.getElementById("submit_btn");
+                if (btn) btn.disabled = true;
                 document.querySelectorAll('.design-card').forEach(card => {
                     card.classList.remove('selected');
                 });
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Send Order Request';
-                
-            } catch (error) {
-                console.error('Submission error:', error);
-                resultMsg.textContent = 'There was a problem. Please try again or email us at jonathank0816@gmail.com';
-                resultMsg.style.color = '#ef4444';
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Send Order Request';
+            } catch (err) {
+                msg.style.color = "#ff6b6b";
+                msg.textContent = "There was a problem. Please try again.";
             }
-        }
+        });
     </script>
 </body>
 </html>
