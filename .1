@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VEARA - Transform Contents into Merchandise</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0f;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* HOME PAGE */
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .video-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1rem;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .video-item {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .video-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+        }
+
+        .logo img {
+            height: 60px;
+            width: auto;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .dynamic-text {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff0080 0%, #ff4d94 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 0, 128, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* ABOUT SECTION */
+        .about-section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .about-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 4rem;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .about-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff0080 0%, #00d4ff 100%);
+            border-radius: 2px;
+        }
+
+        .mission-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mission-label {
+            color: #ff0080;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+        }
+
+        .mission-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .mission-card p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .apply-btn {
+            margin-top: 2rem;
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #ff0080 0%, #ff4d94 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 0, 128, 0.4);
+        }
+
+        /* MODAL STYLES */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 3rem;
+            border-radius: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .modal-close:hover {
+            opacity: 1;
+        }
+
+        .modal-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ff0080 0%, #ff4d94 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-content p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #ff0080;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #ff0080 0%, #ff4d94 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 0, 128, 0.4);
+        }
+
+        .form-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .success-message h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #4ade80;
+        }
+
+        /* CREATORS PAGE */
+        .creators-page {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+
+        .creators-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 3rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .creators-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .creators-header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .creators-header p {
+            font-size: 1.3rem;
+            opacity: 0.8;
+        }
+
+        .creators-grid {
+            display: grid;
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .creator-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .creator-section-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+            padding: 3rem;
+        }
+
+        .creator-section-image {
+            width: 100%;
+            height: 350px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .creator-section-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .creator-section-text {
+            text-align: center;
+        }
+
+        .creator-section-text h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .creator-section-text p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .creator-hero-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .creator-hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .creator-hero-images {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .creator-hero-phone {
+            width: 200px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .creator-hero-arrow {
+            font-size: 3rem;
+            opacity: 0.6;
+        }
+
+        .creator-hero-shirt {
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .creator-feature-section {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 3rem;
+            align-items: center;
+            padding: 3rem;
+        }
+
+        .creator-feature-image {
+            width: 100%;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .creator-feature-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .creator-feature-text h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .creator-website-section {
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .creator-website-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .creator-website-image {
+            width: 100%;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        @media (max-width: 968px) {
+            .creator-section-content,
+            .creator-feature-section {
+                grid-template-columns: 1fr;
+            }
+
+            .creator-hero-images {
+                flex-direction: column;
+            }
+        }
+
+        .placeholder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .placeholder-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .placeholder-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.6;
+        }
+
+        /* COMPANIES PAGE */
+        .companies-page {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #0a0a0f 0%, #2e1a1a 100%);
+        }
+
+        .companies-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .companies-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .companies-header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ff0080 0%, #ff4d94 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .companies-header p {
+            font-size: 1.3rem;
+            opacity: 0.8;
+        }
+
+        .companies-grid {
+            display: grid;
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .company-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .company-section-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+            padding: 3rem;
+        }
+
+        .company-section-image {
+            width: 100%;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .company-section-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .company-section-text h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .company-section-text p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 968px) {
+            .company-section-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .video-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .creators-header h1,
+            .companies-header h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HOME PAGE -->
+    <div id="home" class="page active">
+        <section class="hero">
+            <div class="logo">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23f5f5f5'/%3E%3Ctext x='400' y='370' font-family='Arial Black, sans-serif' font-size='200' font-weight='900' text-anchor='middle' letter-spacing='-5' fill='%23000'%3EVEARA%3C/text%3E%3C/svg%3E" alt="VEARA">
+            </div>
+
+            <div class="video-grid">
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+                <div class="video-item"></div>
+            </div>
+
+            <div class="hero-content">
+                <h1>
+                    Transform <span class="dynamic-text" id="dynamicText">Contents</span><br>into Merchandise.
+                </h1>
+                <p>Improve Merch with Us</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary" onclick="showPage('companies'); return false;">For Companies</a>
+                    <a href="#" class="btn btn-secondary" onclick="showPage('creators'); return false;">For Creators</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <h2 class="about-title">About us</h2>
+            
+            <div class="mission-card">
+                <div class="mission-label">OUR MISSION</div>
+                <h3>Upgrade clothing into living media, where every garment shares stories, memories, and content</h3>
+                <p>VEARA's mission is to transform clothing into living, interactive experiences. We empower creators, brands, and businesses to connect with their audiences by merging fashion with technology, embedding smart labels that unlock stories, media, and memories.</p>
+                <p>Our goal is to redefine apparel as a gateway between the physical and digital world, turning every garment into a platform for creativity, connection, and engagement.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- CREATORS PAGE -->
+    <div id="creators" class="page creators-page">
+        <div class="creators-content">
+            <button class="back-btn" onclick="showPage('home')">← Back to Home</button>
+            
+            <div class="creators-header">
+                <h1>For Creators</h1>
+                <p>Transform your content into premium merchandise</p>
+            </div>
+
+            <div class="creators-grid">
+                <!-- Contents To Merch Section -->
+                <div class="creator-section">
+                    <div class="creator-hero-section">
+                        <h3 class="creator-hero-title">Contents To Merch</h3>
+                        <div class="creator-hero-images">
+                            <div class="creator-hero-phone">
+                                <img src="placeholder-phone.jpg" alt="Content" style="background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);">
+                            </div>
+                            <div class="creator-hero-arrow">→</div>
+                            <div class="creator-hero-shirt">
+                                <img src="placeholder-shirt.jpg" alt="Merchandise" style="background: #f5f5f5;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connect Deeper Section -->
+                <div class="creator-section">
+                    <div class="creator-feature-section">
+                        <div class="creator-feature-image">
+                            <img src="placeholder-model.jpg" alt="Connect with fans" style="background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);">
+                        </div>
+                        <div class="creator-feature-text">
+                            <h3>Connect deeper with your fans</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- We Make Free Websites Section -->
+                <div class="creator-section">
+                    <div class="creator-website-section">
+                        <h3 class="creator-website-title">We Make Free Websites</h3>
+                        <div class="creator-website-image">
+                            <img src="placeholder-website.jpg" alt="Free Website" style="background: #f5f5f5;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sign up for the waitlist -->
+                <div class="creator-section">
+                    <div class="creator-hero-section">
+                        <h3 class="creator-hero-title">Sign up for the waitlist!</h3>
+                        <p style="font-size: 1.2rem; opacity: 0.8; margin-top: 1rem;">Be the first to know when we launch. Join thousands of creators already on the list.</p>
+                        <button class="apply-btn" style="max-width: 400px; margin: 2rem auto 0;" onclick="openModal()">Join Waitlist</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMPANIES PAGE -->
+    <div id="companies" class="page companies-page">
+        <div class="companies-content">
+            <button class="back-btn" onclick="showPage('home')">← Back to Home</button>
+            
+            <div class="companies-header">
+                <h1>For Companies</h1>
+                <p>Scale your brand with custom merchandise solutions</p>
+            </div>
+
+            <div class="companies-grid">
+                <!-- Two Images Section -->
+                <div class="company-section">
+                    <div class="company-section-content">
+                        <div class="company-section-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%234a9d9c%7D.cls-2%7Bfill:%23f4a261%7D.cls-3%7Bfill:%23e9c46a%7D%3C/style%3E%3C/defs%3E%3Crect class='cls-1' width='800' height='600'/%3E%3Ctext x='400' y='300' font-family='Arial' font-size='48' fill='white' text-anchor='middle'%3EConference Hall%3C/text%3E%3C/svg%3E" alt="Conference" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="company-section-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23f4a261%7D%3C/style%3E%3C/defs%3E%3Crect class='cls-1' width='800' height='600'/%3E%3Ctext x='400' y='300' font-family='Arial' font-size='48' fill='white' text-anchor='middle'%3ETeam Office%3C/text%3E%3C/svg%3E" alt="Team" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart Label 1 - NFC -->
+                <div class="company-section">
+                    <div class="company-section-content">
+                        <div class="company-section-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect fill='%23f5f5f5' width='800' height='600'/%3E%3Ctext x='400' y='300' font-family='Arial' font-size='48' fill='%23333' text-anchor='middle'%3ENFC Smart Label%3C/text%3E%3C/svg%3E" alt="Smart Label NFC" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="company-section-text">
+                            <h3>Smart Label 1 - NFC</h3>
+                            <p>Integrate cutting-edge NFC technology into your merchandise. Enable seamless customer interactions, product authentication, and enhanced brand experiences with a simple tap. Connect your physical products to exclusive digital content instantly.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart Label 2 - QR Code -->
+                <div class="company-section">
+                    <div class="company-section-content">
+                        <div class="company-section-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect fill='%231a1a1a' width='800' height='600'/%3E%3Ctext x='400' y='300' font-family='Arial' font-size='48' fill='white' text-anchor='middle'%3EQR Code Label%3C/text%3E%3C/svg%3E" alt="Smart Label QR" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="company-section-text">
+                            <h3>Smart Label 2 - QR code</h3>
+                            <p>Connect your physical products to digital experiences with custom QR codes. Provide instant access to exclusive content, product information, and brand storytelling. Track engagement and build deeper connections with your customers.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculation -->
+                <div class="feature-card">
+                    <h3>Calculation</h3>
+                    <p style="margin-bottom: 2rem;">Calculate your merchandise costs with our interactive pricing tool. Get instant quotes for your custom merchandise projects.</p>
+                    
+                    <div style="max-width: 600px; margin: 0 auto; text-align: left;">
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Quantity</label>
+                            <input type="number" id="quantity" min="1" value="100" 
+                                style="width: 100%; padding: 0.8rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.05); color: white; font-size: 1rem;"
+                                onchange="calculatePrice()">
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Add-ons (Select one)</label>
+                            <div style="display: grid; gap: 0.8rem;">
+                                <label style="display: flex; align-items: center; gap: 0.8rem; padding: 1rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; background: rgba(255, 255, 255, 0.05);">
+                                    <input type="radio" name="addon" value="none" checked onchange="calculatePrice()" style="width: 18px; height: 18px; cursor: pointer;">
+                                    <span>No add-on</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.8rem; padding: 1rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; background: rgba(255, 255, 255, 0.05);">
+                                    <input type="radio" name="addon" value="qr" onchange="calculatePrice()" style="width: 18px; height: 18px; cursor: pointer;">
+                                    <span>QR Code</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.8rem; padding: 1rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; background: rgba(255, 255, 255, 0.05);">
+                                    <input type="radio" name="addon" value="nfc" onchange="calculatePrice()" style="width: 18px; height: 18px; cursor: pointer;">
+                                    <span>NFC</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 12px; margin-top: 2rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
+                                <span>Base Price per Tee:</span>
+                                <span id="basePrice" style="font-weight: 600;">$25.00</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
+                                <span>Add-on Cost:</span>
+                                <span id="addonCost" style="font-weight: 600;">$0.00</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
+                                <span>Price per Tee:</span>
+                                <span id="pricePerTee" style="font-weight: 600;">$25.00</span>
+                            </div>
+                            <div style="border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 1rem; margin-top: 1rem;">
+                                <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 700;">
+                                    <span>Total:</span>
+                                    <span id="totalPrice" style="color: #ff0080;">$2,500.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.7;">
+                            <p><strong>Pricing tiers:</strong></p>
+                            <p>• Under 30: $25/tee</p>
+                            <p>• 30-200: $21.72/tee</p>
+                            <p>• Over 200: $15.50/tee</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WAITLIST MODAL -->
+    <div id="waitlistModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            
+            <div id="formContent">
+                <h2>Join the Waitlist</h2>
+                <p>Be among the first to transform your content into merchandise!</p>
+                
+                <form id="waitlistForm" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" placeholder="Your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="creatorType">Creator Type *</label>
+                        <select id="creatorType" name="creatorType" required>
+                            <option value="">Select your platform</option>
+                            <option value="YouTuber">YouTuber</option>
+                            <option value="Instagrammer">Instagrammer</option>
+                            <option value="TikToker">TikToker</option>
+                            <option value="Twitch Streamer">Twitch Streamer</option>
+                            <option value="Podcaster">Podcaster</option>
+                            <option value="Blogger">Blogger</option>
+                            <option value="Twitter/X Creator">Twitter/X Creator</option>
+                            <option value="Multiple Platforms">Multiple Platforms</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tag">Your Tag/Handle *</label>
+                        <input type="text" id="tag" name="tag" placeholder="@yourusername" required>
+                    </div>
+                    
+                    <button type="submit" class="form-submit" id="submitBtn">Join Waitlist</button>
+                </form>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                <h3>🎉 You're on the list!</h3>
+                <p>Thank you for joining! We'll be in touch soon with updates.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const words = ['Contents', 'Media', 'Ideas', 'Experiences', 'Photos', 'Videos', 'Reels'];
+        let currentIndex = 0;
+        const dynamicTextElement = document.getElementById('dynamicText');
+
+        function cycleText() {
+            currentIndex = (currentIndex + 1) % words.length;
+            dynamicTextElement.style.opacity = '0';
+            
+            setTimeout(() => {
+                dynamicTextElement.textContent = words[currentIndex];
+                dynamicTextElement.style.opacity = '1';
+            }, 300);
+        }
+
+        dynamicTextElement.style.transition = 'opacity 0.3s ease';
+        setInterval(cycleText, 2500);
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function openModal() {
+            document.getElementById('waitlistModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('waitlistModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            // Reset form after closing
+            setTimeout(() => {
+                document.getElementById('formContent').style.display = 'block';
+                document.getElementById('successMessage').classList.remove('active');
+                document.getElementById('waitlistForm').reset();
+            }, 300);
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                creatorType: document.getElementById('creatorType').value,
+                tag: document.getElementById('tag').value,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            // Replace YOUR_WEB_APP_URL with the URL from Google Apps Script
+            const FORM_ENDPOINT = 'YOUR_WEB_APP_URL_HERE';
+            
+            try {
+                const response = await fetch(FORM_ENDPOINT, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                // Show success message
+                document.getElementById('formContent').style.display = 'none';
+                document.getElementById('successMessage').classList.add('active');
+                
+                // Auto-close after 3 seconds
+                setTimeout(() => {
+                    closeModal();
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('Something went wrong. Please try again or email us directly at jonathank0816@gmail.com');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Join Waitlist';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('waitlistModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+
+        // Price Calculator Function
+        function calculatePrice() {
+            const quantity = parseInt(document.getElementById('quantity').value) || 0;
+            const addon = document.querySelector('input[name="addon"]:checked').value;
+            
+            // Base price per tee based on quantity
+            let basePrice = 0;
+            if (quantity < 30) {
+                basePrice = 25.00;
+            } else if (quantity <= 200) {
+                basePrice = 21.72;
+            } else {
+                basePrice = 15.50;
+            }
+            
+            // Add-on costs
+            let addonPerOrder = 0;
+            let addonPerTee = 0;
+            
+            if (addon === 'qr') {
+                if (quantity < 30) {
+                    addonPerOrder = 2.00;
+                } else if (quantity <= 200) {
+                    addonPerTee = 1.50;
+                } else {
+                    addonPerTee = 1.20;
+                }
+            } else if (addon === 'nfc') {
+                if (quantity < 30) {
+                    addonPerOrder = 4.50;
+                } else if (quantity <= 200) {
+                    addonPerTee = 3.50;
+                } else {
+                    addonPerTee = 2.50;
+                }
+            }
+            
+            // Calculate totals
+            const pricePerTee = basePrice + addonPerTee;
+            const subtotal = pricePerTee * quantity;
+            const total = subtotal + addonPerOrder;
+            
+            // Display add-on cost
+            let addonDisplay = '';
+            if (quantity < 30 && addonPerOrder > 0) {
+                addonDisplay = `+${addonPerOrder.toFixed(2)} per order`;
+            } else if (addonPerTee > 0) {
+                addonDisplay = `+${addonPerTee.toFixed(2)} per tee`;
+            } else {
+                addonDisplay = '$0.00';
+            }
+            
+            // Update display
+            document.getElementById('basePrice').textContent = `${basePrice.toFixed(2)}`;
+            document.getElementById('addonCost').textContent = addonDisplay;
+            document.getElementById('pricePerTee').textContent = `${pricePerTee.toFixed(2)}`;
+            document.getElementById('totalPrice').textContent = `${total.toFixed(2)}`;
+        }
+        
+        // Initialize calculator
+        calculatePrice();
+    </script>
+</body>
+</html>
