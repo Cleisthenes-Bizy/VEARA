@@ -1267,6 +1267,15 @@
             document.body.style.overflow = 'hidden';
         }
 
+        // function closeModal() {
+        //     document.getElementById('waitlistModal').classList.remove('active');
+        //     document.body.style.overflow = 'auto';
+        //     setTimeout(() => {
+        //         document.getElementById('formContent').style.display = 'block';
+        //         document.getElementById('successMessage').classList.remove('active');
+        //         document.getElementById('waitlistForm').reset();
+        //     }, 300);
+        // }
         function closeModal() {
             document.getElementById('waitlistModal').classList.remove('active');
             document.body.style.overflow = 'auto';
@@ -1274,6 +1283,11 @@
                 document.getElementById('formContent').style.display = 'block';
                 document.getElementById('successMessage').classList.remove('active');
                 document.getElementById('waitlistForm').reset();
+        
+                // Re-enable the submit button
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Join Waitlist';
             }, 300);
         }
 
